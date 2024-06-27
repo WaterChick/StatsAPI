@@ -1,0 +1,8 @@
+name: StatsAPI
+version: '${project.version}'
+main: cz.waterchick.statsapi.StatsAPI
+author: Water_Chick
+libraries:
+  - com.zaxxer:HikariCP:4.0.3
+softdepend:
+  - PlaceholderAPI
