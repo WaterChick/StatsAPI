@@ -13,6 +13,9 @@ public final class StatsAPI extends JavaPlugin {
 
 
     public static ApiManager getAPI() {
+        if(apiManager == null){
+            apiManager = new ApiManager();
+        }
         return apiManager;
     }
 
@@ -21,8 +24,6 @@ public final class StatsAPI extends JavaPlugin {
         registerListeners();
         loadFiles();
         loadCredentials();
-
-        apiManager = new ApiManager();
 
         if(isPapiEnabled()){
             new PAPI().register();
