@@ -190,12 +190,11 @@ public class Database {
             p = connection.prepareStatement("Show tables;");
 
             ResultSet rs = p.executeQuery();
-            while(rs.next()) {
-                final String[] stringArray = rs.getString(1).split("_");
-                if(stringArray.length != 2 || !stringArray[0].equals(TABLE_PREFIX.replace("_", ""))){
+            while (rs.next()) {
+                if (!rs.getString(1).contains("statsapi_"))
                     continue;
-                }
-                tableList.add(stringArray[1]);
+                String statistic = rs.getString(1).replace("statsapi_", "");
+                tableList.add(statistic);
             }
         } catch (SQLException e) {
             //Print out any exception while trying to prepare statement
