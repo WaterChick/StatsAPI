@@ -23,7 +23,7 @@ public class StatisticManager {
         if(doesStatisticExist(name)) return;
         Statistic statistic = new Statistic(name, save, database);
         statistics.add(statistic);
-        if(save) StatsAPI.getAPI().getDatabase().createTable(name); // Now throws SQLException
+        if(save) database.createTable(name); // Now throws SQLException
     }
 
     public boolean doesStatisticExist(String name){

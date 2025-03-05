@@ -18,7 +18,6 @@ public class ApiManager {
     private final Database database;
 
     public ApiManager() {
-        LOGGER.info("ApiManager constructor called. Thread: " + Thread.currentThread().getName());
         this.database = new Database(
                 DatabaseCredential.HOST.getValue(),
                 DatabaseCredential.PORT.getValue(),
@@ -28,7 +27,6 @@ public class ApiManager {
         );
         this.statisticManager = new StatisticManager(database);
         connectWithRetry();
-        LOGGER.info("ApiManager initialized.");
     }
 
     private void connectWithRetry() {

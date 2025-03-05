@@ -18,7 +18,6 @@ public final class StatsAPI extends JavaPlugin {
     private static StatsAPI plugin;
 
     public static ApiManager getAPI() {
-        LOGGER.info("StatsAPI.getAPI() called. apiManager: " + apiManager);
         return apiManager;
     }
 
@@ -35,20 +34,8 @@ public final class StatsAPI extends JavaPlugin {
             getLogger().info("Hooked to PlaceholderAPI!");
         }
         plugin = this;
-        LOGGER.info("StatsAPI onEnable() completed."); // Add this line
-        try {
-            LOGGER.info("StatsAPI onEnable() started.");
-            loadFiles();
-            loadCredentials();
-            if (isPapiEnabled()) {
-                new PAPI().register();
-                getLogger().info("Hooked to PlaceholderAPI!");
-            }
-            apiManager = new ApiManager(); // Inicializace zde
-            LOGGER.info("StatsAPI onEnable() completed. ApiManager: " + apiManager);
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error in StatsAPI onEnable():", e);
-        }
+        apiManager = new ApiManager(); // Inicializace zde
+
     }
 
     @Override
