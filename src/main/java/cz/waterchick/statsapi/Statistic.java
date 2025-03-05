@@ -1,53 +1,48 @@
 package cz.waterchick.statsapi;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import cz.waterchick.statsapi.database.Database;
+
+import java.util.OptionalInt;
 
 public class Statistic {
 
     private final String name;
     private final boolean save;
+    private final Database database;
 
-    private final Map<UUID, Integer> playerValue = new HashMap<>();
-
-
-    public Statistic(String name, boolean save){
+    public Statistic(String name, boolean save, Database database) {
         this.name = name;
         this.save = save;
+        this.database = database;
     }
-
 
     public String getName() {
         return name;
     }
 
     public Integer getValue(String uuid) {
-        return playerValue.computeIfAbsent(UUID.fromString(uuid), k -> 0);
+        OptionalInt value = database.getValue(name, uuid);
+        return value.orElse(0);
     }
 
-    public Integer setValue(String uuid, Integer value) {
-        return playerValue.put(UUID.fromString(uuid), value);
+    public void setValue(String uuid, Integer value) {
+        database.setValue(name, uuid, value);
     }
 
-
-    public void increment(String uuid){
-        int newValue = getValue(uuid)+1;
-        playerValue.put(UUID.fromString(uuid), newValue);
+    public void increment(String uuid) {
+        Integer currentValue = getValue(uuid);
+        setValue(uuid, currentValue + 1);
     }
 
-    public void decrease(String uuid){
-        int newValue = getValue(uuid)-1;
-        playerValue.put(UUID.fromString(uuid), newValue);
-    }
-
-    public Map<UUID, Integer> getPlayerValue() {
-        return playerValue;
+    public void decrease(String uuid) {
+        Integer currentValue = getValue(uuid);
+        setValue(uuid, currentValue - 1);
     }
 
     public boolean isSave() {
         return save;
     }
 }
+
 
 

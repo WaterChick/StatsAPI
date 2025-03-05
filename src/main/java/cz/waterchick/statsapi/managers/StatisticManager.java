@@ -12,9 +12,15 @@ public class StatisticManager {
 
     private final List<Statistic> statistics = new ArrayList<>();
 
+    private final Database database;
+
+    public StatisticManager(Database database) {
+        this.database = database;
+    }
+
     public void createStatistic(String name, boolean save){
         if(doesStatisticExist(name)) return;
-        Statistic statistic = new Statistic(name, save);
+        Statistic statistic = new Statistic(name, save, database);
         statistics.add(statistic);
         if(save) StatsAPI.getAPI().getDatabase().createTable(name);
     }
@@ -38,58 +44,25 @@ public class StatisticManager {
         return Collections.unmodifiableList(statistics);
     }
 
-    public void savePlayerStatistics(String uuid){
-        Database database = StatsAPI.getAPI().getDatabase();
-        List<Statistic> statisticList = getStatistics();
-        for(Statistic statistic : statisticList){
-            if(!statistic.isSave()){
-                continue;
+    public void savePlayerStatistics(String uuid) {
+        for (Statistic statistic : statistics) {
+            if (statistic.isSave()) {
+                Integer playerValue = statistic.getValue(uuid);
+                database.setValue(statistic.getName(), uuid, playerValue);
             }
-            String name = statistic.getName();
-            Integer playerValue = statistic.getValue(uuid);
-            database.setValue(name, uuid, playerValue);
         }
     }
 
-    public void loadPlayerStatistics(String uuid){
-
-        Database database = StatsAPI.getAPI().getDatabase();
-        StatisticManager statisticManager = StatsAPI.getAPI().getStatisticManager();
-
-        List<String> statisticList = database.getTableStatistics();
-
-        for(String statisticName : statisticList){
-            if(!statisticManager.doesStatisticExist(statisticName)){
+    public void loadPlayerStatistics(String uuid) {
+        for (String statisticName : database.getTableStatistics()) {
+            if (!doesStatisticExist(statisticName)) {
                 createStatistic(statisticName, true);
             }
-            Statistic statistic = statisticManager.getStatistic(statisticName);
-            String name = statistic.getName();
-            OptionalInt value = database.getValue(name,uuid);
-            if(value.isPresent()){
-                statistic.setValue(uuid,value.getAsInt());
-            }
+            Statistic statistic = getStatistic(statisticName);
+            OptionalInt value = database.getValue(statisticName, uuid);
+            value.ifPresent(v -> statistic.setValue(uuid, v));
         }
     }
-
-    public void saveStatistics(){
-        Database database = StatsAPI.getAPI().getDatabase();
-        List<Statistic> statisticList = getStatistics();
-        for(Statistic statistic : statisticList){
-            if(!statistic.isSave()){
-                continue;
-            }
-            String name = statistic.getName();
-            for(Map.Entry<UUID, Integer> entry : statistic.getPlayerValue().entrySet()) {
-                UUID uuid = entry.getKey();
-                Integer value = entry.getValue();
-                OptionalInt optionalValue = database.getValue(name, uuid.toString());
-                if(optionalValue.isPresent() && optionalValue.getAsInt() > value){
-                    continue;
-                }
-                database.setValue(name, uuid.toString(), value);
-            }
-        }
-    }
-
-
 }
+
+

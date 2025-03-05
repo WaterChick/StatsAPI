@@ -10,7 +10,6 @@ public class ApiManager {
 
 
     public ApiManager(){
-        this.statisticManager = new StatisticManager();
         this.database = new Database(
                 DatabaseCredential.HOST.getValue(),
                 DatabaseCredential.PORT.getValue(),
@@ -18,6 +17,7 @@ public class ApiManager {
                 DatabaseCredential.USERNAME.getValue(),
                 DatabaseCredential.PASSWORD.getValue()
         );
+        this.statisticManager = new StatisticManager(database);
         database.connect();
     }
 

@@ -1,7 +1,6 @@
 package cz.waterchick.statsapi;
 
 import cz.waterchick.statsapi.database.DatabaseCredential;
-import cz.waterchick.statsapi.listener.PlayerListener;
 import cz.waterchick.statsapi.managers.ApiManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,7 +20,6 @@ public final class StatsAPI extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        registerListeners();
         loadFiles();
         loadCredentials();
 
@@ -34,7 +32,6 @@ public final class StatsAPI extends JavaPlugin {
 
     @Override
     public void onDisable(){
-        apiManager.getStatisticManager().saveStatistics();
         apiManager.getDatabase().close();
     }
 
@@ -42,10 +39,6 @@ public final class StatsAPI extends JavaPlugin {
         saveDefaultConfig();
         saveConfig();
         reloadConfig();
-    }
-
-    private void registerListeners(){
-        Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
     }
 
     private void loadCredentials(){
