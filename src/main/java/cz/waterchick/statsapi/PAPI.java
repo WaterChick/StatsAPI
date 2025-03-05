@@ -1,5 +1,6 @@
 package cz.waterchick.statsapi;
 
+import cz.waterchick.statsapi.statistics.AbstractStatistic;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -29,7 +30,7 @@ public class PAPI extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, String identifier){
-        Statistic statistic = StatsAPI.getAPI().getStatisticManager().getStatistic(identifier);
+        AbstractStatistic statistic = StatsAPI.getAPI().getStatisticManager().getStatistic(identifier);
         if(statistic == null){
             return null;
         }
