@@ -12,9 +12,6 @@ public final class StatsAPI extends JavaPlugin {
 
 
     public static ApiManager getAPI() {
-        if(apiManager == null){
-            apiManager = new ApiManager();
-        }
         return apiManager;
     }
 
@@ -22,7 +19,7 @@ public final class StatsAPI extends JavaPlugin {
     public void onEnable() {
         loadFiles();
         loadCredentials();
-
+        apiManager = new ApiManager();
         if(isPapiEnabled()){
             new PAPI().register();
             getLogger().info("Hooked to PlaceholderAPI!");
@@ -47,6 +44,11 @@ public final class StatsAPI extends JavaPlugin {
         DatabaseCredential.DATABASE.setValue(getConfig().getString("mysql.database"));
         DatabaseCredential.USERNAME.setValue(getConfig().getString("mysql.username"));
         DatabaseCredential.PASSWORD.setValue(getConfig().getString("mysql.password"));
+        System.out.println(DatabaseCredential.HOST.getValue());
+        System.out.println(DatabaseCredential.PORT.getValue());
+        System.out.println(DatabaseCredential.DATABASE.getValue());
+        System.out.println(DatabaseCredential.USERNAME.getValue());
+        System.out.println(DatabaseCredential.PASSWORD.getValue());
     }
 
     private boolean isPapiEnabled(){

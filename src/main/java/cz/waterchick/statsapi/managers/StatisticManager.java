@@ -5,6 +5,7 @@ import cz.waterchick.statsapi.StatsAPI;
 import cz.waterchick.statsapi.database.Database;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.sql.SQLException;
 import java.util.*;
 
 public class StatisticManager {
@@ -18,11 +19,11 @@ public class StatisticManager {
         this.database = database;
     }
 
-    public void createStatistic(String name, boolean save){
+    public void createStatistic(String name, boolean save) throws SQLException { // Add throws SQLException
         if(doesStatisticExist(name)) return;
         Statistic statistic = new Statistic(name, save, database);
         statistics.add(statistic);
-        if(save) StatsAPI.getAPI().getDatabase().createTable(name);
+        if(save) StatsAPI.getAPI().getDatabase().createTable(name); // Now throws SQLException
     }
 
     public boolean doesStatisticExist(String name){
@@ -53,7 +54,7 @@ public class StatisticManager {
         }
     }
 
-    public void loadPlayerStatistics(String uuid) {
+    public void loadPlayerStatistics(String uuid) throws SQLException {
         for (String statisticName : database.getTableStatistics()) {
             if (!doesStatisticExist(statisticName)) {
                 createStatistic(statisticName, true);

@@ -100,5 +100,8 @@ public class Database {
             hikari.close();
         }
     }
+    public Connection getConnection() throws SQLException{
+        return hikari.getConnection();
+    }
 }
 
