@@ -28,9 +28,11 @@ public class Database {
         this.database = database;
         this.username = username;
         this.password = password;
+
+        connect();
     }
 
-    public void connect() {
+    private void connect() {
         hikari = new HikariDataSource();
         hikari.setMaximumPoolSize(25);
         hikari.setJdbcUrl("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database);

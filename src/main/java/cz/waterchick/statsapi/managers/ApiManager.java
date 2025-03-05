@@ -1,7 +1,11 @@
 package cz.waterchick.statsapi.managers;
 
+import cz.waterchick.statsapi.StatsAPI;
 import cz.waterchick.statsapi.database.Database;
 import cz.waterchick.statsapi.database.DatabaseCredential;
+import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,6 +18,7 @@ public class ApiManager {
     private final Database database;
 
     public ApiManager() {
+        LOGGER.info("ApiManager constructor called. Thread: " + Thread.currentThread().getName());
         this.database = new Database(
                 DatabaseCredential.HOST.getValue(),
                 DatabaseCredential.PORT.getValue(),
@@ -21,39 +26,34 @@ public class ApiManager {
                 DatabaseCredential.USERNAME.getValue(),
                 DatabaseCredential.PASSWORD.getValue()
         );
-        connectWithRetry();
         this.statisticManager = new StatisticManager(database);
+        connectWithRetry();
+        LOGGER.info("ApiManager initialized.");
     }
 
     private void connectWithRetry() {
-        int retryAttempts = 3;
-        int retryDelay = 5000; // 5 seconds
-        for (int i = 0; i < retryAttempts; i++) {
-            try {
-                Thread.sleep(3000); // Initial delay
-                database.connect();
-                //Attempt to get a connection to test connection.
-                database.getConnection().close();
-                LOGGER.info("Database connection successful.");
-                return; // Connection successful, exit the loop
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // Restore interrupted state
-                LOGGER.log(Level.SEVERE, "Thread interrupted during database connection attempt.", e);
-                return; // Exit the loop
-            } catch (SQLException e) {
-                LOGGER.log(Level.SEVERE, "Database connection failed (attempt " + (i + 1) + ").", e);
-                if (i < retryAttempts - 1) {
-                    try {
-                        Thread.sleep(retryDelay);
-                    } catch (InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                        LOGGER.log(Level.SEVERE, "Retry delay interrupted.", ex);
-                        return;
+        LOGGER.info("Database connection attempt. Thread: " + Thread.currentThread().getName()); //Add this line
+        int retryAttempts = 5;
+        int retryDelay = 20; // 20 ticks (1 second)
+        new BukkitRunnable() {
+            int attempts = 0;
+
+            @Override
+            public void run() {
+                try {
+                    database.getConnection();
+                    LOGGER.log(Level.INFO, "Database connection successful. Thread: " + Thread.currentThread().getName());
+                    cancel(); // Stop the retry task
+                } catch (SQLException e) {
+                    LOGGER.log(Level.SEVERE, "Database connection failed (attempt " + (attempts + 1) + ").", e);
+                    attempts++;
+                    if (attempts >= retryAttempts) {
+                        LOGGER.severe("Failed to connect to the database after " + retryAttempts + " attempts.");
+                        cancel();
                     }
                 }
             }
-        }
-        LOGGER.severe("Failed to establish database connection after " + retryAttempts + " attempts.");
+        }.runTaskTimerAsynchronously(StatsAPI.getPlugin(), 0L, retryDelay);
     }
 
     public StatisticManager getStatisticManager() {
