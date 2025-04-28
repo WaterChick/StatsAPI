@@ -29,6 +29,7 @@ public class StatisticManager {
         if(doesStatisticExist(name)) return;
         DatabaseStatistic statistic = new DatabaseStatistic(name,database);
         statistics.add(statistic);
+        database.createTable(name);
     }
 
     public boolean doesStatisticExist(String name){
