@@ -19,15 +19,15 @@ public class StatisticManager {
         this.database = database;
     }
 
-    public void createRuntimeStatistic(String name) throws SQLException { // Add throws SQLException
+    public void createRuntimeStatistic(String name) {
         if(doesStatisticExist(name)) return;
         RuntimeStatistic statistic = new RuntimeStatistic(name);
         statistics.add(statistic);
     }
 
-    public void createDatabaseStatistic(String name) throws SQLException { // Add throws SQLException
+    public void createDatabaseStatistic(String name) {
         if(doesStatisticExist(name)) return;
-        RuntimeStatistic statistic = new RuntimeStatistic(name);
+        DatabaseStatistic statistic = new DatabaseStatistic(name,database);
         statistics.add(statistic);
     }
 
