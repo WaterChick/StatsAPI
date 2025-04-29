@@ -4,6 +4,7 @@ import cz.waterchick.statsapi.StatsAPI;
 import cz.waterchick.statsapi.database.Database;
 import cz.waterchick.statsapi.database.DatabaseCredential;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.SQLException;
@@ -17,13 +18,14 @@ public class ApiManager {
     private final StatisticManager statisticManager;
     private final Database database;
 
-    public ApiManager() {
+    public ApiManager(JavaPlugin plugin) {
         this.database = new Database(
                 DatabaseCredential.HOST.getValue(),
                 DatabaseCredential.PORT.getValue(),
                 DatabaseCredential.DATABASE.getValue(),
                 DatabaseCredential.USERNAME.getValue(),
-                DatabaseCredential.PASSWORD.getValue()
+                DatabaseCredential.PASSWORD.getValue(),
+                plugin
         );
         this.statisticManager = new StatisticManager(database);
         connectWithRetry();

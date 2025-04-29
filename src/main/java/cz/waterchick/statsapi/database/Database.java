@@ -1,6 +1,8 @@
 package cz.waterchick.statsapi.database;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,14 +22,17 @@ public class Database {
     private final String username;
     private final String password;
 
+    private final JavaPlugin plugin;
+
     private static final String TABLE_PREFIX = "statsapi_";
 
-    public Database(String host, String port, String database, String username, String password) {
+    public Database(String host, String port, String database, String username, String password, JavaPlugin plugin) {
         this.host = host;
         this.port = port;
         this.database = database;
         this.username = username;
         this.password = password;
+        this.plugin = plugin;
 
         connect();
     }
@@ -68,15 +73,17 @@ public class Database {
     }
 
     public void setValue(String name, String uuid, Integer value) {
-        String sql = "REPLACE INTO " + TABLE_PREFIX + name + " (uuid, value) VALUES (?, ?);";
-        try (Connection connection = hikari.getConnection();
-             PreparedStatement p = connection.prepareStatement(sql)) {
-            p.setString(1, uuid);
-            p.setInt(2, value);
-            p.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            String sql = "REPLACE INTO " + TABLE_PREFIX + name + " (uuid, value) VALUES (?, ?);";
+            try (Connection connection = hikari.getConnection();
+                 PreparedStatement p = connection.prepareStatement(sql)) {
+                p.setString(1, uuid);
+                p.setInt(2, value);
+                p.execute();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public List<String> getTableStatistics() {

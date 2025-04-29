@@ -34,7 +34,7 @@ public final class StatsAPI extends JavaPlugin {
             getLogger().info("Hooked to PlaceholderAPI!");
         }
         plugin = this;
-        apiManager = new ApiManager(); // Inicializace zde
+        apiManager = new ApiManager(this); // Inicializace zde
 
     }
 
