@@ -40,6 +40,8 @@ public class Database {
     private void connect() {
         hikari = new HikariDataSource();
         hikari.setMaximumPoolSize(25);
+        hikari.setMaxLifetime(3000000);
+        hikari.setLeakDetectionThreshold(30000);
         hikari.setJdbcUrl("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database);
         hikari.setDriverClassName("com.mysql.cj.jdbc.Driver");
         hikari.addDataSourceProperty("user", this.username);
@@ -61,11 +63,14 @@ public class Database {
         String sql = "SELECT value FROM " + TABLE_PREFIX + name + " WHERE uuid = ?;";
         try (Connection connection = hikari.getConnection();
              PreparedStatement p = connection.prepareStatement(sql)) {
-            p.setString(1, uuid);
-            ResultSet resultSet = p.executeQuery();
-            if (resultSet.next()) {
-                return OptionalInt.of(resultSet.getInt("value"));
+
+            p.setString(1, uuid); // <- Tady se to nastavuje
+            try (ResultSet resultSet = p.executeQuery()) {
+                if (resultSet.next()) {
+                    return OptionalInt.of(resultSet.getInt("value"));
+                }
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -90,8 +95,8 @@ public class Database {
         List<String> tableList = new ArrayList<>();
         String sql = "SHOW TABLES;";
         try (Connection connection = hikari.getConnection();
-             PreparedStatement p = connection.prepareStatement(sql)) {
-            ResultSet rs = p.executeQuery();
+             PreparedStatement p = connection.prepareStatement(sql);
+            ResultSet rs = p.executeQuery()) {
             while (rs.next()) {
                 String tableName = rs.getString(1);
                 if (tableName.startsWith(TABLE_PREFIX)) {

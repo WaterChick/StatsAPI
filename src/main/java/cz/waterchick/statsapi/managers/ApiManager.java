@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,8 +41,7 @@ public class ApiManager {
 
             @Override
             public void run() {
-                try {
-                    database.getConnection();
+                try (Connection connection = database.getConnection()){
                     LOGGER.log(Level.INFO, "Database connection successful. Thread: " + Thread.currentThread().getName());
                     cancel(); // Stop the retry task
                 } catch (SQLException e) {
@@ -65,8 +65,7 @@ public class ApiManager {
     }
 
     public boolean testConnection() {
-        try {
-            database.getConnection().close();
+        try (Connection connection = database.getConnection()){
             return true;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Database connection test failed.", e);
