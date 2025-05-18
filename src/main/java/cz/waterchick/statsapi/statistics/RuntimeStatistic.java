@@ -32,4 +32,9 @@ public class RuntimeStatistic extends AbstractStatistic {
         Integer currentValue = getValue(uuid);
         setValue(uuid, currentValue - 1);
     }
+
+    @Override
+    public void clear() {
+        values.clear();
+    }
 }

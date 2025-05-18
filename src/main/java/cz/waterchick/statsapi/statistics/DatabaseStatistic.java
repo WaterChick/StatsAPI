@@ -35,4 +35,10 @@ public class DatabaseStatistic extends AbstractStatistic {
         Integer currentValue = getValue(uuid);
         setValue(uuid, currentValue - 1);
     }
+
+    @Override
+    public void clear() {
+        database.dropTable(getName());
+        database.createTable(getName());
+    }
 }

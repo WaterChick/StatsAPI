@@ -19,4 +19,6 @@ public abstract class AbstractStatistic {
     public abstract void increment(String uuid);
 
     public abstract void decrease(String uuid);
+
+    public abstract void clear();
 }

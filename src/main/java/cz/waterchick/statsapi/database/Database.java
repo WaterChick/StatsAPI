@@ -59,6 +59,16 @@ public class Database {
         }
     }
 
+    public void dropTable(String name) {
+        String sql = "DROP TABLE IF EXISTS " + TABLE_PREFIX + name + ";";
+        try (Connection connection = hikari.getConnection();
+             PreparedStatement p = connection.prepareStatement(sql)) {
+            p.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public OptionalInt getValue(String name, String uuid) {
         String sql = "SELECT value FROM " + TABLE_PREFIX + name + " WHERE uuid = ?;";
         try (Connection connection = hikari.getConnection();
