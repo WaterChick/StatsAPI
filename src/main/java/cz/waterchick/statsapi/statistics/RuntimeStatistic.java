@@ -1,7 +1,6 @@
 package cz.waterchick.statsapi.statistics;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class RuntimeStatistic extends AbstractStatistic {
 
@@ -36,5 +35,10 @@ public class RuntimeStatistic extends AbstractStatistic {
     @Override
     public void clear() {
         values.clear();
+    }
+
+    @Override
+    public Set<Map.Entry<String, Integer>> getAll() {
+        return values.entrySet();
     }
 }

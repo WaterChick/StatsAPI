@@ -2,7 +2,7 @@ package cz.waterchick.statsapi.statistics;
 
 import cz.waterchick.statsapi.database.Database;
 
-import java.util.OptionalInt;
+import java.util.*;
 
 public class DatabaseStatistic extends AbstractStatistic {
 
@@ -40,5 +40,10 @@ public class DatabaseStatistic extends AbstractStatistic {
     public void clear() {
         database.dropTable(getName());
         database.createTable(getName());
+    }
+
+    @Override
+    public Set<Map.Entry<String, Integer>> getAll() {
+        return database.getAll(getName()).entrySet();
     }
 }

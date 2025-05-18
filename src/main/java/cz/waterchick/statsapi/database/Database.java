@@ -8,10 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.OptionalInt;
+import java.util.*;
 
 public class Database {
 
@@ -67,6 +64,23 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public Map<String, Integer> getAll(String name) {
+        Map<String, Integer> result = new HashMap<>();
+        String sql = "SELECT uuid, value FROM " + TABLE_PREFIX + name + ";";
+        try (Connection connection = hikari.getConnection();
+             PreparedStatement p = connection.prepareStatement(sql);
+             ResultSet rs = p.executeQuery()) {
+            while (rs.next()) {
+                String uuid = rs.getString("uuid");
+                int value = rs.getInt("value");
+                result.put(uuid, value);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public OptionalInt getValue(String name, String uuid) {
